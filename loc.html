@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captura de Localização</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        #location {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        #copyMessage {
+            margin-top: 10px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Captura de Localização</h1>
+    <button id="getLocation">Obter Validação</button>
+    <div id="location"></div>
+    <div id="copyMessage"></div>
+
+    <script>
+        document.getElementById('getLocation').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('location').innerHTML = "Não suportado, tente novamente por outro navegador";
+            }
+        });
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const locationString = `${latitude};${longitude}`;
+            document.getElementById('location').innerHTML = locationString;
+
+            // Copiar as coordenadas para a área de transferência
+            navigator.clipboard.writeText(locationString)
+                .then(() => {
+                    document.getElementById('copyMessage').innerHTML = "validação copiada para a área de transferência!";
+                })
+                .catch(err => {
+                    document.getElementById('copyMessage').innerHTML = "Erro ao copiar a validação";
+                });
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('location').innerHTML = "Usuário negou a solicitação de validação.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('location').innerHTML = "A validação não está disponível.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('location').innerHTML = "A solicitação de validação expirou.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('location').innerHTML = "Um erro desconhecido ocorreu.";
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
